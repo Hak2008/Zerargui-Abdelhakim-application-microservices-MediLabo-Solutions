@@ -1,0 +1,54 @@
+version: '3'
+
+services:
+  patient-info-service:
+    build:
+      context: C:\Users\hakim\Microservices_Medilabo_Solutions\Zerargui-Abdelhakim-application-microservices-MediLabo-Solutions\PatientInfoService
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+
+  patient-note-service:
+    build:
+      context: C:\Users\hakim\Microservices_Medilabo_Solutions\Zerargui-Abdelhakim-application-microservices-MediLabo-Solutions\PatientNoteService
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+
+
+  patient-report-service:
+    build:
+      context: C:\Users\hakim\Microservices_Medilabo_Solutions\Zerargui-Abdelhakim-application-microservices-MediLabo-Solutions\PatientReport
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
+
+  patient-ui:
+    build:
+      context: C:\Users\hakim\Microservices_Medilabo_Solutions\Zerargui-Abdelhakim-application-microservices-MediLabo-Solutions\PatientUI
+      dockerfile: Dockerfile
+    ports:
+      - "8083:8083"
+    depends_on:
+      - gateway
+
+  gateway:
+    build:
+      context: C:\Users\hakim\Microservices_Medilabo_Solutions\Zerargui-Abdelhakim-application-microservices-MediLabo-Solutions\Gateway
+      dockerfile: Dockerfile
+    ports:
+      - "9090:9090"
+    depends_on:
+      - patient-info-service
+      - patient-note-service
+      - patient-report-service
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: patientinfoservice
+      MYSQL_ROOT_PASSWORD: PayMyBuddy07.
+    ports:
+      - "3306:3306"
