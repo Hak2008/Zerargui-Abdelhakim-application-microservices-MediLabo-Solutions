@@ -7,8 +7,11 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
+    networks:
+      - backend
     depends_on:
-      - mysql
+      - mysql-db
+
 
   patient-note-service:
     build:
@@ -16,6 +19,10 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8081:8081"
+    networks:
+      - backend
+    depends_on:
+      - mongo-db
 
 
   patient-report-service:
@@ -24,6 +31,12 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8082:8082"
+    networks:
+      - backend
+    depends_on:
+      - patient-info-service
+      - patient-note-service
+
 
   patient-ui:
     build:
@@ -31,8 +44,11 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8083:8083"
+    networks:
+      - backend
     depends_on:
       - gateway
+
 
   gateway:
     build:
@@ -40,15 +56,31 @@ services:
       dockerfile: Dockerfile
     ports:
       - "9090:9090"
+    networks:
+      - backend
     depends_on:
       - patient-info-service
       - patient-note-service
       - patient-report-service
 
-  mysql:
-    image: mysql:8.0
-    environment:
-      MYSQL_DATABASE: patientinfoservice
-      MYSQL_ROOT_PASSWORD: PayMyBuddy07.
+  mysql-db:
+      build:
+        context: C:\Users\hakim\Microservices_Medilabo_Solutions\Zerargui-Abdelhakim-application-microservices-MediLabo-Solutions\PatientInfoService
+        dockerfile: Dockerfile_MySql
+      ports:
+        - "3306:3306"
+      networks:
+        - backend
+
+  mongo-db:
+    build:
+      context: C:\Users\hakim\Microservices_Medilabo_Solutions\Zerargui-Abdelhakim-application-microservices-MediLabo-Solutions\PatientNoteService
+      dockerfile: Dockerfile_Mongodb
     ports:
-      - "3306:3306"
+      - "27017:27017"
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
