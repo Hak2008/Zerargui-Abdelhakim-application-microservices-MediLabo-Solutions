@@ -2,85 +2,104 @@ version: '3'
 
 services:
   patient-info-service:
+    container_name: patient-info-service
     build:
-      context: C:\Users\hakim\Microservices_Medilabo_Solutions\Zerargui-Abdelhakim-application-microservices-MediLabo-Solutions\PatientInfoService
+      context: ../PatientInfoService
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
     networks:
-      - backend
+      - bridge
     depends_on:
       - mysql-db
-
+    environment:
+      - PATIENT_INFO_SERVICE_URL=http://patient-info-service:8080
 
   patient-note-service:
+    container_name: patient-note-service
     build:
-      context: C:\Users\hakim\Microservices_Medilabo_Solutions\Zerargui-Abdelhakim-application-microservices-MediLabo-Solutions\PatientNoteService
+      context: ../PatientNoteService
       dockerfile: Dockerfile
     ports:
       - "8081:8081"
     networks:
-      - backend
+      - bridge
     depends_on:
       - mongo-db
+    environment:
+      - PATIENT_NOTE_SERVICE_URL=http://patient-note-service:8081
 
 
   patient-report-service:
+    container_name: patient-report-service
     build:
-      context: C:\Users\hakim\Microservices_Medilabo_Solutions\Zerargui-Abdelhakim-application-microservices-MediLabo-Solutions\PatientReport
+      context: ../PatientReport
       dockerfile: Dockerfile
     ports:
       - "8082:8082"
     networks:
-      - backend
+      - bridge
     depends_on:
       - patient-info-service
       - patient-note-service
+    environment:
+      - PATIENT_REPORT_SERVICE_URL=http://patient-report-service:8082
+      - PATIENT_INFO_SERVICE_URL=http://patient-info-service:8080
+      - PATIENT_NOTE_SERVICE_URL=http://patient-note-service:8081
 
 
   patient-ui:
+    container_name: patient-ui
     build:
-      context: C:\Users\hakim\Microservices_Medilabo_Solutions\Zerargui-Abdelhakim-application-microservices-MediLabo-Solutions\PatientUI
+      context: ../PatientUI
       dockerfile: Dockerfile
     ports:
       - "8083:8083"
     networks:
-      - backend
+      - bridge
     depends_on:
       - gateway
+    environment:
+      - PATIENT_UI_URL=http://patient-ui:8083
+      - GATEWAY_URL=http://gateway:8080
+      - GATEWAY_URL=http://gateway:8081
+      - GATEWAY_URL=http://gateway:8082
 
 
   gateway:
+    container_name: gateway
     build:
-      context: C:\Users\hakim\Microservices_Medilabo_Solutions\Zerargui-Abdelhakim-application-microservices-MediLabo-Solutions\Gateway
+      context: ../Gateway
       dockerfile: Dockerfile
     ports:
       - "9090:9090"
     networks:
-      - backend
+      - bridge
     depends_on:
       - patient-info-service
       - patient-note-service
       - patient-report-service
 
   mysql-db:
+      container_name: mysql-db
       build:
-        context: C:\Users\hakim\Microservices_Medilabo_Solutions\Zerargui-Abdelhakim-application-microservices-MediLabo-Solutions\PatientInfoService
+        context: ../PatientInfoService
         dockerfile: Dockerfile_MySql
       ports:
         - "3306:3306"
       networks:
-        - backend
+        - bridge
 
   mongo-db:
+    container_name: mongo-db
     build:
-      context: C:\Users\hakim\Microservices_Medilabo_Solutions\Zerargui-Abdelhakim-application-microservices-MediLabo-Solutions\PatientNoteService
+      context: ../PatientNoteService
       dockerfile: Dockerfile_Mongodb
     ports:
       - "27017:27017"
     networks:
-      - backend
+      - bridge
 
 networks:
-  backend:
+  bridge:
     driver: bridge

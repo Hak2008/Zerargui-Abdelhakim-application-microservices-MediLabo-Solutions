@@ -14,4 +14,4 @@ COPY src/main/resources/application.properties /app/application.properties
 EXPOSE 9090
 
 # Command to execute when the container starts
-CMD ["java", "-jar","-Dserver.port=9090", "app.jar"]
+CMD ["java", "-jar", "-Dserver.address=0.0.0.0", "-Dserver.port=9090", "app.jar"]

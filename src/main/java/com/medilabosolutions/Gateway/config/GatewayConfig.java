@@ -14,5 +14,6 @@ public class GatewayConfig {
             return chain.filter(exchange.mutate().request(request -> request.headers(headers -> headers.set("Authorization", token))).build());
         };
     }
+
 }
 
