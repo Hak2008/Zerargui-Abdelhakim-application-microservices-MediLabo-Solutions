@@ -12,8 +12,6 @@ services:
       - bridge
     depends_on:
       - mysql-db
-    environment:
-      - PATIENT_INFO_SERVICE_URL=http://patient-info-service:8080
 
   patient-note-service:
     container_name: patient-note-service
@@ -26,9 +24,6 @@ services:
       - bridge
     depends_on:
       - mongo-db
-    environment:
-      - PATIENT_NOTE_SERVICE_URL=http://patient-note-service:8081
-
 
   patient-report-service:
     container_name: patient-report-service
@@ -42,11 +37,6 @@ services:
     depends_on:
       - patient-info-service
       - patient-note-service
-    environment:
-      - PATIENT_REPORT_SERVICE_URL=http://patient-report-service:8082
-      - PATIENT_INFO_SERVICE_URL=http://patient-info-service:8080
-      - PATIENT_NOTE_SERVICE_URL=http://patient-note-service:8081
-
 
   patient-ui:
     container_name: patient-ui
@@ -59,12 +49,6 @@ services:
       - bridge
     depends_on:
       - gateway
-    environment:
-      - PATIENT_UI_URL=http://patient-ui:8083
-      - GATEWAY_URL=http://gateway:8080
-      - GATEWAY_URL=http://gateway:8081
-      - GATEWAY_URL=http://gateway:8082
-
 
   gateway:
     container_name: gateway
@@ -79,10 +63,6 @@ services:
       - patient-info-service
       - patient-note-service
       - patient-report-service
-    environment:
-      - GATEWAY_URL=http://gateway:8080
-      - GATEWAY_URL=http://gateway:8081
-      - GATEWAY_URL=http://gateway:8082
 
   mysql-db:
       container_name: mysql-db
