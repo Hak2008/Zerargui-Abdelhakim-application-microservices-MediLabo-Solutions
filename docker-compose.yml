@@ -79,6 +79,10 @@ services:
       - patient-info-service
       - patient-note-service
       - patient-report-service
+    environment:
+      - GATEWAY_URL=http://gateway:8080
+      - GATEWAY_URL=http://gateway:8081
+      - GATEWAY_URL=http://gateway:8082
 
   mysql-db:
       container_name: mysql-db
