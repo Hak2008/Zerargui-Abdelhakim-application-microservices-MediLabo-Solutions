@@ -7,7 +7,9 @@ services:
       context: ../PatientInfoService
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - "${PATIENT_INFO_SERVICE_PORT}:${PATIENT_INFO_SERVICE_PORT}"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:${MYSQL_DB_PORT}/patientinfoservice
     networks:
       - bridge
     depends_on:
@@ -19,7 +21,9 @@ services:
       context: ../PatientNoteService
       dockerfile: Dockerfile
     ports:
-      - "8081:8081"
+      - "${PATIENT_NOTE_SERVICE_PORT}:${PATIENT_NOTE_SERVICE_PORT}"
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://mongo-db:${MONGO_DB_PORT}/patientnoteservice
     networks:
       - bridge
     depends_on:
@@ -31,7 +35,10 @@ services:
       context: ../PatientReport
       dockerfile: Dockerfile
     ports:
-      - "8082:8082"
+      - "${PATIENT_REPORT_SERVICE_PORT}:${PATIENT_REPORT_SERVICE_PORT}"
+    environment:
+      - PATIENTINFOSERVICE_URL=http://patient-info-service:${PATIENT_INFO_SERVICE_PORT}
+      - PATIENTNOTESERVICE_URL=http://patient-note-service:${PATIENT_NOTE_SERVICE_PORT}
     networks:
       - bridge
     depends_on:
@@ -44,7 +51,9 @@ services:
       context: ../PatientUI
       dockerfile: Dockerfile
     ports:
-      - "8083:8083"
+      - "${PATIENTUI_PORT}:${PATIENTUI_PORT}"
+    environment:
+      - GATEWAY_URL=http://gateway:${GATEWAY_PORT}
     networks:
       - bridge
     depends_on:
@@ -56,7 +65,11 @@ services:
       context: ../Gateway
       dockerfile: Dockerfile
     ports:
-      - "9090:9090"
+      - "${GATEWAY_PORT}:${GATEWAY_PORT}"
+    environment:
+      - PATIENTINFOSERVICE_URL=http://patient-info-service:${PATIENT_INFO_SERVICE_PORT}
+      - PATIENTNOTESERVICE_URL=http://patient-note-service:${PATIENT_NOTE_SERVICE_PORT}
+      - PATIENTREPORTSERVICE_URL=http://patient-report-service:${PATIENT_REPORT_SERVICE_PORT}
     networks:
       - bridge
     depends_on:
@@ -70,7 +83,7 @@ services:
         context: ../PatientInfoService
         dockerfile: Dockerfile_MySql
       ports:
-        - "3306:3306"
+        - "${MYSQL_DB_PORT}:${MYSQL_DB_PORT}"
       networks:
         - bridge
 
@@ -80,7 +93,7 @@ services:
       context: ../PatientNoteService
       dockerfile: Dockerfile_Mongodb
     ports:
-      - "27017:27017"
+      - "${MONGO_DB_PORT}:${MONGO_DB_PORT}"
     networks:
       - bridge
 
